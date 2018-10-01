@@ -12,8 +12,15 @@ var Enemy = function(x, y) {
 // Update the enemy's position
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-  //Multiply any movement by the dt parameter
-  this.x += 150*dt;
+
+  if(this.x>ctx.canvas.width + this.width){
+    //Randomnize the starting position of each enemy
+    this.x = -200*Math.floor(Math.random()*4)+1;
+  }
+  else {
+    //Multiply any movement by the dt parameter
+    this.x += 220*dt;
+  }
 };
 
 // Draw the enemy on the screen
@@ -71,7 +78,11 @@ let player = new Player("", 200, 300);
 
 let enemyPosition = [55, 140, 230];
 let allEnemies = enemyPosition.map((y, index) => {
-  return new Enemy((-100 * (index + 1)), y);
+//  return new Enemy((-100 * (index + 1)), y);
+
+    //The enemies start moving at ramdom positions
+    return new Enemy(((-100 * (index + 1))*Math.floor(Math.random()*4)+1),y);
+
 });
 
 // This listens for key presses and sends the keys to your
