@@ -7,7 +7,13 @@ var Enemy = function(x, y) {
   this.y = y;
   this.height = 65;
   this.width = 95;
+  this.collision=false;
 };
+
+//Collistion function
+function collision(px,py,pw,ph,ex,ey,ew,eh) {
+  return (Math.abs(px-ex)*2 < (pw + ew)) && (Math.abs(py-ey)*2 < (py + ey));
+}
 
 // Update the enemy's position
 // Parameter: dt, a time delta between ticks
@@ -20,6 +26,16 @@ Enemy.prototype.update = function(dt) {
   else {
     //Multiply any movement by the dt parameter
     this.x += 220*dt;
+  }
+
+  if ( collision(player.x,player.y,player.width,player.height,this.x,this.y,this.width,this.height)) {
+    this.collision=true;
+    if (player) {
+      player.x = 200;
+      player.y=300;
+    }
+  } else {
+    this.collision=false;
   }
 };
 
@@ -59,7 +75,7 @@ Player.prototype.handleInput = function(direction) {
   } else if (direction === "down") {
     this.y += 83;
   }
-  console.log(`x=${this.x}, y=${this.y}`);
+  //console.log(`x=${this.x}, y=${this.y}`);
 
   //Preventing the player from going off the canvas
   if (this.x < 0) {
@@ -78,12 +94,14 @@ let player = new Player("", 200, 300);
 
 let enemyPosition = [55, 140, 230];
 let allEnemies = enemyPosition.map((y, index) => {
-//  return new Enemy((-100 * (index + 1)), y);
-
-    //The enemies start moving at ramdom positions
-    return new Enemy(((-100 * (index + 1))*Math.floor(Math.random()*4)+1),y);
+  //The enemies start moving at ramdom positions
+  return new Enemy(((-100 * (index + 1))*Math.floor(Math.random()*4)+1),y);
 
 });
+
+
+
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -98,7 +116,8 @@ document.addEventListener("keyup", function(e) {
   player.handleInput(allowedKeys[e.keyCode]);
 });
 
-console.log(allEnemies);
+
+
 
 //Udacity's comments
 
