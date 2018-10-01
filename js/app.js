@@ -15,21 +15,21 @@ function collision(px,py,pw,ph,ex,ey,ew,eh) {
   return (Math.abs(px-ex)*2 < pw + ew) && (Math.abs(py-ey)*2 < ph + eh);
 }
 
-
 // Update the enemy's position
 // Parameter: dt, a time delta between ticks/
 Enemy.prototype.update = function(dt) {
-
   if(this.x>ctx.canvas.width + this.width){
     //Randomnize the starting position of each enemy
-    this.x = -200*Math.floor(Math.random()*4)+1;
+    this.x = -220*Math.floor(Math.random()*4)+1;
   }
   else {
     //Multiply any movement by the dt parameter
     this.x += 220*dt;
   }
+  //Check collision
   if ( collision(player.x,player.y,player.width,player.height,this.x,this.y,this.width,this.height)) {
     this.collision=true;
+    //Reset player's position if collistion happens
     if (player) {
       player.x = 200;
       player.y=300;
@@ -37,8 +37,6 @@ Enemy.prototype.update = function(dt) {
   } else {
     this.collision=false;
   }
-
-
 };
 
 // Draw the enemy on the screen
@@ -57,7 +55,6 @@ var Player = function(sprite, x, y) {
 };
 
 Player.prototype.update = function() {}
-
 
 // Draw the player on the screen
 Player.prototype.render = function() {
@@ -82,12 +79,15 @@ Player.prototype.handleInput = function(direction) {
   } else if (this.x > 400) {
     this.x = 400;
   } else if (this.y < -20) {
-    this.y = -20;
+    this.y = -19;
   } else if (this.y > 380) {
     this.y = 380;
-  } else if (this.y < 60) {
-    this.y = -20;
-    gameWon();
+  } else if (this.y <= -19) { //If the player win the game, winning messege will pop up.
+    setTimeout(function(){
+      alert('Congratulations! You won! Click "Ok" to play again.');
+      gameWon();
+    },100);
+
   }
 };
 
@@ -99,17 +99,14 @@ let enemyPosition = [60, 140, 220];
 let allEnemies = enemyPosition.map((y, index) => {
   //The enemies start moving at ramdom positions
   return new Enemy(((-100 * (index + 1))*Math.floor(Math.random()*4)+1),y);
-
 });
 
-
+//Reset the enemies and player's positions
 function gameWon() {
-  console.log('You won!');
-}
-
-
-
-
+   enemyPosition = [60, 140, 220];
+   player.x = 200;
+   player.y=300;
+ }
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -123,16 +120,3 @@ document.addEventListener("keyup", function(e) {
 
   player.handleInput(allowedKeys[e.keyCode]);
 });
-
-
-
-
-//Udacity's comments
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
