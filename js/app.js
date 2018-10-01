@@ -12,11 +12,12 @@ var Enemy = function(x, y) {
 
 //Collistion function
 function collision(px,py,pw,ph,ex,ey,ew,eh) {
-  return (Math.abs(px-ex)*2 < (pw + ew)) && (Math.abs(py-ey)*2 < (py + ey));
+  return (Math.abs(px-ex)*2 < pw + ew) && (Math.abs(py-ey)*2 < ph + eh);
 }
 
+
 // Update the enemy's position
-// Parameter: dt, a time delta between ticks
+// Parameter: dt, a time delta between ticks/
 Enemy.prototype.update = function(dt) {
 
   if(this.x>ctx.canvas.width + this.width){
@@ -27,7 +28,6 @@ Enemy.prototype.update = function(dt) {
     //Multiply any movement by the dt parameter
     this.x += 220*dt;
   }
-
   if ( collision(player.x,player.y,player.width,player.height,this.x,this.y,this.width,this.height)) {
     this.collision=true;
     if (player) {
@@ -37,6 +37,8 @@ Enemy.prototype.update = function(dt) {
   } else {
     this.collision=false;
   }
+
+
 };
 
 // Draw the enemy on the screen
@@ -54,28 +56,25 @@ var Player = function(sprite, x, y) {
   this.width = 65;
 };
 
-// Update the player's position
-// Parameter: dt, a time delta between ticks
-Player.prototype.update = function(dt) {
-  //Multiply any movement by the dt parameter
-};
+Player.prototype.update = function() {}
+
 
 // Draw the player on the screen
 Player.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+//Player will move based on the key input
 Player.prototype.handleInput = function(direction) {
   if (direction === "left") {
     this.x -= 100;
   } else if (direction === "up") {
-    this.y -= 83;
+    this.y -= 80;
   } else if (direction === "right") {
     this.x += 100;
   } else if (direction === "down") {
-    this.y += 83;
+    this.y += 80;
   }
-  //console.log(`x=${this.x}, y=${this.y}`);
 
   //Preventing the player from going off the canvas
   if (this.x < 0) {
@@ -86,18 +85,27 @@ Player.prototype.handleInput = function(direction) {
     this.y = -20;
   } else if (this.y > 380) {
     this.y = 380;
+  } else if (this.y < 60) {
+    this.y = -20;
+    gameWon();
   }
 };
 
 //Create a player
 let player = new Player("", 200, 300);
 
-let enemyPosition = [55, 140, 230];
+//Set enemies' starting position
+let enemyPosition = [60, 140, 220];
 let allEnemies = enemyPosition.map((y, index) => {
   //The enemies start moving at ramdom positions
   return new Enemy(((-100 * (index + 1))*Math.floor(Math.random()*4)+1),y);
 
 });
+
+
+function gameWon() {
+  console.log('You won!');
+}
 
 
 
